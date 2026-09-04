@@ -1,0 +1,101 @@
+<section class="page-card">
+  <div class="page-heading">
+    <div>
+      <h1>Registered Employees</h1>
+      <p>Manage all registered employee records.</p>
+    </div>
+    <a routerLink="/employees/new" class="btn primary">+ New Employee</a>
+  </div>
+
+  <div class="filters">
+    <div class="field">
+      <label>Employee Name</label>
+      <input [(ngModel)]="nameFilter" (ngModelChange)="onFilterChange()" (keyup.enter)="search()" placeholder="Search by name">
+    </div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input [(ngModel)]="mobileFilter" maxlength="10" (ngModelChange)="onFilterChange()" (keyup.enter)="search()" placeholder="Search by mobile">
+    </div>
+    <button class="btn primary" (click)="search()">Search</button>
+    <button class="btn" (click)="clearFilters()">Clear</button>
+  </div>
+
+  <div class="table-wrap" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Id</th>
+          <th>Employee Name</th>
+          <th>Mobile</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of employees">
+          <td>{{ e.employeeId }}</td>
+          <td>{{ e.employeeName }}</td>
+          <td>{{ e.mobileNum }}</td>
+          <td>{{ e.age }}</td>
+          <td class="actions">
+            <a class="btn small" [routerLink]="['/employees/edit', e.employeeId]">Edit</a>
+            <button class="btn small danger" (click)="delete(e.employeeId, e.employeeName)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="employees.length === 0">
+          <td colspan="5" class="empty">No employees found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading...</div>
+
+  <div class="pagination" *ngIf="totalRecords > 0">
+    <span>Showing page {{ pageNumber }} of {{ totalPages }} — {{ totalRecords }} record(s)</span>
+    <div>
+      <button class="btn small" (click)="previous()" [disabled]="pageNumber === 1">Previous</button>
+      <button class="btn small" (click)="next()" [disabled]="pageNumber === totalPages">Next</button>
+    </div>
+  </div>
+</section>
+<div
+  class="delete-modal-backdrop"
+  *ngIf="showDeleteModal"
+  (click)="cancelDelete()">
+
+  <div
+    class="delete-modal"
+    (click)="$event.stopPropagation()">
+
+    <div class="delete-icon">
+      !
+    </div>
+
+    <h2>Delete Employee</h2>
+
+    <p>
+      Are you sure you want to delete
+      <strong>"{{ employeeToDeleteName }}"</strong>?
+    </p>
+
+    <div class="delete-modal-actions">
+
+      <button
+        type="button"
+        class="modal-cancel-btn"
+        (click)="cancelDelete()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="modal-delete-btn"
+        (click)="confirmDelete()">
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+</div>
